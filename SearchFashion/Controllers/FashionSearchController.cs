@@ -1,7 +1,9 @@
 ﻿using FashionSearch.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SearchFashion.Common;
 using SearchFashion.Models;
 
 namespace FashionSearch.Controllers {
@@ -60,14 +62,14 @@ namespace FashionSearch.Controllers {
          // 初回は結果を空にする
          var viewModel = new FashionSearchViewModel
          {
-            Results = new()
+            Results = new PaginatedList<Fashion>()
          };
 
          return View(viewModel);
       }
 
-      // 2. 検索実行 (POST)
-      [HttpPost]
+      // 2. 検索実行 (Get)
+      [HttpGet]
       public async Task<IActionResult> Search(FashionSearchViewModel searchModel)
       {
          int maxYear = await GetMaxYearAsync();
@@ -101,8 +103,11 @@ namespace FashionSearch.Controllers {
             query = query.Where(x => x.Usage == searchModel.Usage);
          }
 
+         // ソート
+         query = query.OrderBy(x => x.Id);
+
          // 検索結果を格納
-         searchModel.Results = await query.OrderBy(x => x.Id).ToListAsync();
+         searchModel.Results = await PaginatedList<Fashion>.CreateAsync(query, searchModel.PageIndex, searchModel.PageSize);
 
          // 検索結果を同じ Index ビューに返して表示する
          return View("Index", searchModel);
