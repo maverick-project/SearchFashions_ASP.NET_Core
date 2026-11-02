@@ -1,0 +1,125 @@
+﻿@model FashionSearch.ViewModels.FashionSearchViewModel
+
+@{
+    ViewData["Title"] = "ファッションアイテム検索";
+}
+
+<div class="container my-4">
+    <!-- ページタイトル -->
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="fw-bold text-dark mb-0">👗 ファッションアイテム検索</h2>
+    </div>
+
+    <!-- 検索フォーム（カードデザイン） -->
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body bg-light rounded-3 p-4">
+            <form asp-action="Search" method="post">
+                <div class="row g-3">
+                    <!-- Gender -->
+                    <div class="col-md-4">
+                        <label asp-for="Gender" class="form-label fw-semibold text-secondary">性別</label>
+                        <select asp-for="Gender" asp-items="ViewBag.GenderList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-4">
+                        <label asp-for="Category" class="form-label fw-semibold text-secondary">カテゴリ</label>
+                        <select asp-for="Category" asp-items="ViewBag.CategoryList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- ArticleType -->
+                    <div class="col-md-4">
+                        <label asp-for="ArticleType" class="form-label fw-semibold text-secondary">商品区分</label>
+                        <select asp-for="ArticleType" asp-items="ViewBag.ArticleTypeList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- Season -->
+                    <div class="col-md-4">
+                        <label asp-for="Season" class="form-label fw-semibold text-secondary">季節</label>
+                        <select asp-for="Season" asp-items="ViewBag.SeasonList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- Year -->
+                    <div class="col-md-4">
+                        <label asp-for="Year" class="form-label fw-semibold text-secondary">販売年</label>
+                        <select asp-for="Year" asp-items="ViewBag.YearList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- Usage -->
+                    <div class="col-md-4">
+                        <label asp-for="Usage" class="form-label fw-semibold text-secondary">用途</label>
+                        <select asp-for="Usage" asp-items="ViewBag.UsageList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- ボタンエリア -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">クリア</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        <i class="bi bi-search"></i> 検索する
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 検索結果セクション -->
+    @if (Model.Results != null && Model.Results.Any())
+    {
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold text-dark m-0">検索結果</h4>
+            <span class="badge bg-primary fs-6 px-3 py-2">@Model.Results.Count 件ヒット</span>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>性別</th>
+                            <th>カテゴリ</th>
+                            <th>商品区分</th>
+                            <th>季節</th>
+                            <th>販売年</th>
+                            <th>用途</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Results)
+                        {
+                            <tr>
+                                <td>@item.Gender</td>
+                                <td>@item.Category</td>
+                                <td>@item.Articletype</td>
+                                <td>@item.Season</td>
+                                <td>@item.Year</td>
+                                <td>@item.Usage</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (Model.Results != null && ViewBag.Initialized == false)
+    {
+        <!-- 検索されたが0件だった場合や、初期表示の状態 -->
+        <div class="text-center py-5 text-muted">
+            <div class="mb-2 fs-3">🔍</div>
+            <p class="fs-5">条件に一致するアイテムがありません。または上のフォームから検索を行ってください。</p>
+        </div>
+    }
+</div>
