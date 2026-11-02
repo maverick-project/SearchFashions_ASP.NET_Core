@@ -121,15 +121,15 @@
         </div>
 
 
-        <!-- ★ 追加：テーブルの下にページネーションUIを表示 -->
+        <!-- テーブルの下にページネーションUIを表示 -->
         @if (Model.Results.TotalPages > 1)
         {
-            <nav aria-label="Page navigation">
+            <nav aria-label="Page navigation" class="my-4">
                 <ul class="pagination justify-content-center">
                     
                     <!-- 前へ -->
-                    <li class="page-item @(!Model.Results.HasPreviousPage ? "disabled" : "")">
-                        <a class="page-link" 
+                    <li class="page-item mx-1 @(!Model.Results.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link px-3 rounded"
                            asp-action="Search" 
                            asp-route-PageIndex="@(Model.Results.PageIndex - 1)"
                            asp-route-Gender="@Model.Gender"
@@ -145,8 +145,9 @@
                     <!-- ページ番号 (StartPage ～ EndPage) -->
                     @for (int i = Model.Results.StartPage; i <= Model.Results.EndPage; i++)
                     {
-                        <li class="page-item @(i == Model.Results.PageIndex ? "active" : "")">
-                            <a class="page-link" 
+                        <li class="page-item mx-1 @(i == Model.Results.PageIndex ? "active" : "")">
+                            <a class="page-link px-3 rounded"
+                               style="width: 42px; text-align: center;"
                                asp-action="Search" 
                                asp-route-PageIndex="@i"
                                asp-route-Gender="@Model.Gender"
@@ -161,8 +162,8 @@
                     }
 
                     <!-- 次へ -->
-                    <li class="page-item @(!Model.Results.HasNextPage ? "disabled" : "")">
-                        <a class="page-link" 
+                    <li class="page-item mx-1 @(!Model.Results.HasNextPage ? "disabled" : "")">
+                        <a class="page-link px-3 rounded"
                            asp-action="Search" 
                            asp-route-PageIndex="@(Model.Results.PageIndex + 1)"
                            asp-route-Gender="@Model.Gender"
