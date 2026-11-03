@@ -81,14 +81,8 @@
     <!-- 検索結果セクション -->
     @if (Model.Results != null && Model.Results.Any())
     {
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <!-- 全 45 件中 1 〜 10 件目を表示 -->
-            <div class="text-muted">
-                全 <span class="fw-bold text-dark">@Model.Results.TotalCount</span> 件中
-                <span class="fw-bold text-dark">@Model.Results.StartIndex</span> 〜
-                <span class="fw-bold text-dark">@Model.Results.EndIndex</span> 件目を表示
-            </div>
-        </div>
+        <!-- テーブルの上にページネーションのサマリー表示 -->
+        <partial name="_PaginationSummaryPartial" model="Model.Results" />
 
         <div class="card shadow-sm border-0 mb-4">
             <div class="table-responsive">
@@ -122,64 +116,8 @@
 
 
         <!-- テーブルの下にページネーションUIを表示 -->
-        @if (Model.Results.TotalPages > 1)
-        {
-            <nav aria-label="Page navigation" class="my-4">
-                <ul class="pagination justify-content-center">
-                    
-                    <!-- 前へ -->
-                    <li class="page-item mx-1 @(!Model.Results.HasPreviousPage ? "disabled" : "")">
-                        <a class="page-link px-3 rounded"
-                           asp-action="Search" 
-                           asp-route-PageIndex="@(Model.Results.PageIndex - 1)"
-                           asp-route-Gender="@Model.Gender"
-                           asp-route-Category="@Model.Category"
-                           asp-route-ArticleType="@Model.ArticleType"
-                           asp-route-Season="@Model.Season"
-                           asp-route-Year="@Model.Year"
-                           asp-route-Usage="@Model.Usage">
-                            前へ
-                        </a>
-                    </li>
-
-                    <!-- ページ番号 (StartPage ～ EndPage) -->
-                    @for (int i = Model.Results.StartPage; i <= Model.Results.EndPage; i++)
-                    {
-                        <li class="page-item mx-1 @(i == Model.Results.PageIndex ? "active" : "")">
-                            <a class="page-link px-3 rounded"
-                               style="width: 42px; text-align: center;"
-                               asp-action="Search" 
-                               asp-route-PageIndex="@i"
-                               asp-route-Gender="@Model.Gender"
-                               asp-route-Category="@Model.Category"
-                               asp-route-ArticleType="@Model.ArticleType"
-                               asp-route-Season="@Model.Season"
-                               asp-route-Year="@Model.Year"
-                               asp-route-Usage="@Model.Usage">
-                                @i
-                            </a>
-                        </li>
-                    }
-
-                    <!-- 次へ -->
-                    <li class="page-item mx-1 @(!Model.Results.HasNextPage ? "disabled" : "")">
-                        <a class="page-link px-3 rounded"
-                           asp-action="Search" 
-                           asp-route-PageIndex="@(Model.Results.PageIndex + 1)"
-                           asp-route-Gender="@Model.Gender"
-                           asp-route-Category="@Model.Category"
-                           asp-route-ArticleType="@Model.ArticleType"
-                           asp-route-Season="@Model.Season"
-                           asp-route-Year="@Model.Year"
-                           asp-route-Usage="@Model.Usage">
-                            次へ
-                        </a>
-                    </li>
-
-                </ul>
-            </nav>
-        }
-
+        <!-- Model.Results (PaginatedList<T>) をそのまま渡します -->
+        <partial name="_PaginationPartial" model="Model.Results" />
     }
     else if (Model.Results != null && ViewBag.Initialized == false)
     {

@@ -1,0 +1,65 @@
+﻿@model SearchFashion.Common.IPaginatedList
+
+@{
+    // ページネーションを表示する部分ビュー
+    var totalPages = Model.TotalPages;
+    var pageIndex = Model.PageIndex;
+    var startPage = Model.StartPage;
+    var endPage = Model.EndPage;
+    var hasPreviousPage = Model.HasPreviousPage;
+    var hasNextPage = Model.HasNextPage;
+
+    // 現在のクエリパラメータを辞書として取得（検索条件の維持に利用）
+    var queryDict = ViewContext.HttpContext.Request.Query
+        .ToDictionary(k => k.Key, v => v.Value.ToString());
+
+    // ページ番号用のルート値を作成するローカル関数
+    Dictionary<string, string> GetRouteValues(int targetPageIndex)
+    {
+        var dict = new Dictionary<string, string>(queryDict);
+        dict["PageIndex"] = targetPageIndex.ToString();
+
+        // ページネーションのリンクが押されたときは常に false を送る
+        // これによりリンクの場合はページネーションを初期化させない
+        dict["IsInitial"] = "false";
+
+        return dict;
+    }
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation" class="my-4">
+        <ul class="pagination justify-content-center">
+
+            <!-- 前へ -->
+            <li class="page-item mx-1 @(!hasPreviousPage ? "disabled" : "")">
+                <a class="page-link px-3 rounded"
+                   asp-all-route-data="@GetRouteValues(pageIndex - 1)">
+                    前へ
+                </a>
+            </li>
+
+            <!-- ページ番号 -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item mx-1 @(i == pageIndex ? "active" : "")">
+                    <a class="page-link rounded"
+                       style="width: 42px; text-align: center;"
+                       asp-all-route-data="@GetRouteValues(i)">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- 次へ -->
+            <li class="page-item mx-1 @(!hasNextPage ? "disabled" : "")">
+                <a class="page-link px-3 rounded"
+                   asp-all-route-data="@GetRouteValues(pageIndex + 1)">
+                    次へ
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+}

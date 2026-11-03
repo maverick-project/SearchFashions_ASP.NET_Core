@@ -5,7 +5,7 @@ namespace SearchFashion.Common {
    /// ページネーションで使用するカスタムコレクションクラス
    /// </summary>
    /// <typeparam name="T"></typeparam>
-   public class PaginatedList<T> : List<T> {
+   public class PaginatedList<T> : List<T>, IPaginatedList {
       public int PageIndex { get; private set; } // 現在表示するページ番号
       public int TotalPages { get; private set; } // 総ページ数
       public int StartPage { get; private set; } // ページネーション(1, 2, 3, 4, 5のやつ)の最初のページ番号

@@ -3,7 +3,7 @@ using SearchFashion.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ★ ここを追加：rag_fashionsContext を DI に登録する
+// rag_fashionsContext を DI に登録する
 builder.Services.AddDbContext<rag_fashionsContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("FashionDbConnection")));
 
