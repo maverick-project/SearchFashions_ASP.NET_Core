@@ -63,9 +63,9 @@ namespace SearchFashion.Common {
             }
          }
 
-         StartIndex = TotalPages == 0 ? 0 : (PageIndex - 1) * pageSize + 1;
-         EndIndex = Math.Min(PageIndex * pageSize, TotalPages);
          TotalCount = totalCount;
+         StartIndex = TotalPages == 0 ? 0 : (PageIndex - 1) * pageSize + 1;
+         EndIndex = Math.Min(PageIndex * pageSize, TotalCount);
       }
 
       public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
