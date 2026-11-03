@@ -15,8 +15,21 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-   app.UseExceptionHandler("/Home/Error");
+   // 本番環境のときのエラー設定
+   // 例外が発生したら "/CustomError/Error" に遷移させる
+   app.UseExceptionHandler("/CustomError/Error");
+
+   // HTTPステータスコード（404など）に対するカスタムページを出したい場合
+   // app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+
+   app.UseHsts();
 }
+else
+{
+   // 開発環境のときは詳細なエラー画面（Developer Exception Page）を表示
+   app.UseDeveloperExceptionPage();
+}
+
 app.UseRouting();
 
 app.UseAuthorization();

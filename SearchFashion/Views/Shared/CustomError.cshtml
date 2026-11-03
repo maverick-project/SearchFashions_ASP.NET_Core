@@ -1,0 +1,22 @@
+﻿@model FashionSearch.ViewModels.CustomErrorViewModel
+@{
+    ViewData["Title"] = "内部エラー";
+}
+
+<h2 class="text-danger">内部エラー</h2>
+<p>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <h3>UserId: @Model.RequestId</h3>
+    </p>
+}
+
+<p>
+    <h3>Url: @Model.Url</h3>
+</p>
+
+<p>
+    <h3>エラーの内容： @Model.ExceptionMessage</h3>
+</p>
