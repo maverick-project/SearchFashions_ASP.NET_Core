@@ -39,5 +39,15 @@
 　　　　　　・テーブルの上にページネーションのサマリー表示を組み込む
 　　　　　　・テーブルの下にページネーションUIを表示
 
+２．カスタムエラーページ
 
+　　1)共通機能
+　　　　Controllers/CustomErrorController.cs
+　　　　ViewModels/CustomErrorViewModel.cs
+　　　　Views/Shared/CustomError.cshtml
+　　　　　デザインの修正が必要
+        Program.cs
+　　　　　UseExceptionHandler()の呼び出しなどCustomErrorに遷移させる処理の追加
 
+　　2)組み込み手順
+　　　　なし

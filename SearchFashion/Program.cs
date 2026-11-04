@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Properties/launchSettings.jsonで"ASPNETCORE_ENVIRONMENT": "Development"となってる場合開発環境
 if (!app.Environment.IsDevelopment())
 {
    // 本番環境のときのエラー設定
