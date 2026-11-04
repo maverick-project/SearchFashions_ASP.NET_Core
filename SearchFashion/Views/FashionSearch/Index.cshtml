@@ -8,6 +8,9 @@
     <!-- 検索フォーム（カードデザイン） -->
     <div class="card shadow-sm border-0 mb-5">
         <div class="card-body bg-light rounded-3 p-4">
+            <!-- 複合バリデーションエラーや全体のエラーをここにまとめて表示 -->
+            <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
             <!-- ページネーション使うときはlinkがそのまま使えるのでpostではなくgetのほうがよい-->
             <form asp-action="Search" method="get">
 
@@ -48,15 +51,14 @@
                     </div>
 
                     <!-- 販売年(終了年) -->
-                    <div class="col-md-4">
-                        <label asp-for="EndYear" class="form-label fw-semibold text-secondary">販売年(終了年)</label>
+                    <div class="col-md-2">
+                        <label asp-for="EndYear" class="form-label fw-semibold text-secondary">販売年(終了年)　～</label>
                         <select asp-for="EndYear" asp-items="ViewBag.YearList" class="form-select">
                             <option value="">指定なし</option>
                         </select>
                     </div>
-
                     <!-- 販売年(開始年) -->
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label asp-for="StartYear" class="form-label fw-semibold text-secondary">販売年(開始年)</label>
                         <select asp-for="StartYear" asp-items="ViewBag.YearList" class="form-select">
                             <option value="">指定なし</option>

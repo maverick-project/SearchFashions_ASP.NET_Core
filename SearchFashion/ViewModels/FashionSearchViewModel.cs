@@ -1,9 +1,10 @@
 ﻿using SearchFashion.Common;
 using SearchFashion.Models;
 using SearchFashion.ViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace FashionSearch.ViewModels {
-   public class FashionSearchViewModel : PaginatedListViewModel {
+   public class FashionSearchViewModel : PaginatedListViewModel, IValidatableObject {
       public string? Gender { get; set; }
       public string? Category { get; set; }
       public string? ArticleType { get; set; }
@@ -20,6 +21,15 @@ namespace FashionSearch.ViewModels {
       {
          // 1ページあたりに表示する最大行数
          base.PageSize = 5;
+      }
+
+      public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+      {
+         if (!CustomValidationHelper.ValidateYearRange(StartYear, EndYear, out var errorMsg))
+         {
+            // １回だけエラーメッセージを表示させるためStartYearだけ渡す
+            yield return new ValidationResult(errorMsg, new[] { nameof(StartYear) });
+         }
       }
    }
 }

@@ -91,6 +91,14 @@ namespace FashionSearch.Controllers {
 
          await PopulateViewBagAsync(false);
 
+         if (!ModelState.IsValid)
+         {
+            // エラーがある場合は、検索処理を実行せずに、
+            // 入力された値（model）をそのまま持って元の検索フォーム画面に戻す
+            searchModel.PageIndex = 1;
+            return View("Index", searchModel); // または View(model)
+         }
+
          // クエリの組み立て（未指定項目は除外）
          var query = _context.Fashions.AsQueryable();
 

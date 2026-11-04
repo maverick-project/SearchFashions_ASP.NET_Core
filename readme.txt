@@ -20,7 +20,7 @@
 　　　　builder.Services.AddDbContext<rag_fashionsContext>(options =>
     　　　options.UseNpgsql(builder.Configuration.GetConnectionString("FashionDbConnection")));
 
-１．ページネーション
+２．ページネーション
 　　1)共通機能
 　　　　Common/IPaginatedList.cs
 　　　　Common/PaginatedList.cs
@@ -39,7 +39,7 @@
 　　　　　　・テーブルの上にページネーションのサマリー表示を組み込む
 　　　　　　・テーブルの下にページネーションUIを表示
 
-２．カスタムエラーページ
+３．カスタムエラーページ
 
 　　1)共通機能
 　　　　Controllers/CustomErrorController.cs
@@ -51,3 +51,21 @@
 
 　　2)組み込み手順
 　　　　なし
+
+４．複合バリデーションチェック
+
+　　1)共通機能
+　　　　Common/CustomValidationHelper.cs
+　　　　　現在年の大小判定の未実装。必要に応じて機能追加
+
+　　2)組み込み手順
+　　　・ViewModels/FashionSearchViewModel.cs
+　　　　　IValidatableObjectインターフェースを継承し、Validateを実装
+　　　・Controllers/FashionSearchController.cs
+　　　　　if (!ModelState.IsValid)の実装
+　　　・ViewModels/FashionSearchViewModel.cs
+　　　　　IValidatableObjectインターフェース付与
+　　　　　Validateの実装
+　　　・Views/FashionSearch/Index.cshtml
+　　　　　<div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>の実装
+      
