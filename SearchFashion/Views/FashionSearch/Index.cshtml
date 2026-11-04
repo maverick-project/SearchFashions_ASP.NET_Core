@@ -47,10 +47,18 @@
                         </select>
                     </div>
 
-                    <!-- Year -->
+                    <!-- 販売年(終了年) -->
                     <div class="col-md-4">
-                        <label asp-for="Year" class="form-label fw-semibold text-secondary">販売年</label>
-                        <select asp-for="Year" asp-items="ViewBag.YearList" class="form-select">
+                        <label asp-for="EndYear" class="form-label fw-semibold text-secondary">販売年(終了年)</label>
+                        <select asp-for="EndYear" asp-items="ViewBag.YearList" class="form-select">
+                            <option value="">指定なし</option>
+                        </select>
+                    </div>
+
+                    <!-- 販売年(開始年) -->
+                    <div class="col-md-4">
+                        <label asp-for="StartYear" class="form-label fw-semibold text-secondary">販売年(開始年)</label>
+                        <select asp-for="StartYear" asp-items="ViewBag.YearList" class="form-select">
                             <option value="">指定なし</option>
                         </select>
                     </div>

@@ -14,15 +14,22 @@ namespace FashionSearch.Controllers {
          _context = context;
       }
 
-      // --- 共通：データベースから今年の最大値を取得するヘルパー ---
-      private async Task<int> GetMaxYearAsync()
+      // --- 共通：DBから日付の最小値・最大値を取得するヘルパー ---
+      private async Task<Dictionary<string, int>> GetDateRangeAsync()
       {
-         return await _context.Fashions.AsQueryable().MaxAsync(x => x.Year)
-            ?? DateTime.Now.Year;
+         // ※ Fashionテーブルの日付カラム名を実際のプロパティ名に書き換えてください
+         var minYear = await _context.Fashions.AsQueryable().MinAsync(x => (int?)x.Year) ?? DateTime.Now.Year;
+
+         var maxYear = await _context.Fashions.AsQueryable().MaxAsync(x => (int?)x.Year) ?? DateTime.Now.Year;
+
+         return new Dictionary<string, int>(){
+            {"minYear", minYear },
+            {"maxYear", maxYear }
+         };
       }
 
       // --- 共通：ViewBag（プルダウンリスト）を設定するヘルパー ---
-      private async Task PopulateViewBagAsync(bool initialized, int maxYear, int? selectedYear = null)
+      private async Task PopulateViewBagAsync(bool initialized)
       {
          ViewBag.GenderList = new SelectList(
              await _context.Fashions.Where(x => x.Gender != null).Select(x => x.Gender).Distinct().OrderBy(x => x).ToListAsync()
@@ -36,17 +43,20 @@ namespace FashionSearch.Controllers {
          ViewBag.SeasonList = new SelectList(
              await _context.Fashions.Where(x => x.Season != null).Select(x => String.IsNullOrWhiteSpace(x.Season) ? "その他": x.Season).Distinct().OrderBy(b => b == "その他" ? 1 : 0).ThenBy(b => b).ToListAsync()
          );
+
+         var dateRange = await GetDateRangeAsync();
+         var minYear = dateRange["minYear"];
+         var maxYear = dateRange["maxYear"];
+         var yearList = new List<int>();
+         for (var i = maxYear; i >= minYear; i--)
+         {
+            yearList.Add(i);
+         }
+         ViewBag.YearList = new SelectList(yearList);
+
          ViewBag.UsageList = new SelectList(
              await _context.Fashions.Where(x => x.Usage != null).Select(x => String.IsNullOrWhiteSpace(x.Usage) ? "その他": x.Usage).Distinct().OrderBy(b => b == "その他" ? 1 : 0).ThenBy(b => b).ToListAsync()
          );
-
-         var yearOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = $"今年 ({maxYear})", Value = maxYear.ToString() },
-                new SelectListItem { Text = $"去年 ({maxYear - 1})", Value = (maxYear - 1).ToString() },
-                new SelectListItem { Text = "その他", Value = "その他" }
-            };
-         ViewBag.YearList = new SelectList(yearOptions, "Value", "Text", selectedYear?.ToString());
 
          ViewBag.Initialized = initialized;
       }
@@ -54,9 +64,8 @@ namespace FashionSearch.Controllers {
       // 1. 初期表示 (GET)
       [HttpGet]
       public async Task<IActionResult> Index()
-      {
-         int maxYear = await GetMaxYearAsync();
-         await PopulateViewBagAsync(true, maxYear);
+      {      
+         await PopulateViewBagAsync(true);
 
          // 初回は結果を空にする
          var viewModel = new FashionSearchViewModel
@@ -78,8 +87,9 @@ namespace FashionSearch.Controllers {
             searchModel.PageIndex = 1;
          }
 
-         int maxYear = await GetMaxYearAsync();
-         await PopulateViewBagAsync(false, maxYear, searchModel.Year);
+         var dateRange = await GetDateRangeAsync();
+
+         await PopulateViewBagAsync(false);
 
          // クエリの組み立て（未指定項目は除外）
          var query = _context.Fashions.AsQueryable();
@@ -100,17 +110,26 @@ namespace FashionSearch.Controllers {
          {
             query = query.Where(x => x.Season == searchModel.Season);
          }
-         if (searchModel.Year.HasValue)
+
+         int minYear = 0;
+         if (searchModel.StartYear.HasValue)
          {
-            query = query.Where(x => x.Year == searchModel.Year.Value);
+            minYear = searchModel.StartYear.Value;
          }
+         int maxYear = 9999;
+         if (searchModel.EndYear.HasValue)
+         {
+            maxYear = searchModel.EndYear.Value;
+         }
+         query = query.Where(x => x.Year >= minYear && x.Year <= maxYear);
+
          if (!string.IsNullOrEmpty(searchModel.Usage))
          {
             query = query.Where(x => x.Usage == searchModel.Usage);
          }
 
          // ソート
-         query = query.OrderBy(x => x.Id);
+         query = query.OrderByDescending(x => x.Year).ThenBy(x => x.Id);
 
          // 検索結果を格納
          // ページネーションを使用する場合はPaginatedListカスタムリストコレクションを使用する

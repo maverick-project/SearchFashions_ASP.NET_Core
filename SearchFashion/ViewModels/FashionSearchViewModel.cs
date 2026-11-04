@@ -8,7 +8,8 @@ namespace FashionSearch.ViewModels {
       public string? Category { get; set; }
       public string? ArticleType { get; set; }
       public string? Season { get; set; }
-      public int? Year { get; set; }
+      public int? StartYear { get; set; }
+      public int? EndYear { get; set; }
       public string? Usage { get; set; }
 
       // 検索結果のリスト
@@ -18,7 +19,7 @@ namespace FashionSearch.ViewModels {
       public FashionSearchViewModel()
       {
          // 1ページあたりに表示する最大行数
-         base.PageSize = 7;
+         base.PageSize = 5;
       }
    }
 }
