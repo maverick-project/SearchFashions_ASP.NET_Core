@@ -4,6 +4,64 @@
     ViewData["Title"] = "ファッションアイテム検索";
 }
 
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    const articleTypeInput = document.getElementById('ArticleType');
+    const articleTypeList = document.getElementById('ArticleTypeList');
+
+    // 入力イベント（文字が変更されるたびに発火）
+    articleTypeInput.addEventListener('input', async function () {
+        const query = this.value.trim();
+
+        // 入力が空の場合は候補を隠して終了
+        if (query.length === 0) {
+            articleTypeList.style.display = 'none';
+            articleTypeList.innerHTML = '';
+            return;
+        }
+
+        try {
+            // コントローラーへ非同期リクエスト
+            const response = await fetch(`/FashionSearch/SearchArticleTypes?query=${encodeURIComponent(query)}`);
+            if (!response.ok) return;
+
+            const articleTypes = await response.json();
+            articleTypeList.innerHTML = '';
+
+            if (articleTypes.length > 0) {
+                // 候補リストを生成して追加
+                articleTypes.forEach(articleType => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.textContent = articleType;
+                    li.style.cursor = 'pointer';
+
+                    // 候補をクリックしたときの処理
+                    li.addEventListener('click', function () {
+                        articleTypeInput.value = articleType; // テキストボックスに反映
+                        articleTypeList.style.display = 'none'; // リストを閉じる
+                    });
+
+                    articleTypeList.appendChild(li);
+                });
+                articleTypeList.style.display = 'block'; // リストを表示
+            } else {
+                articleTypeList.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('検索中にエラーが発生しました:', error);
+        }
+    });
+
+    // テキストボックスや候補リスト以外をクリックしたらリストを閉じる
+    document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !articleTypeList.contains(e.target)) {
+            articleTypeList.style.display = 'none';
+        }
+    });
+});
+</script>
+
 <div class="container my-4">
     <!-- 検索フォーム（カードデザイン） -->
     <div class="card shadow-sm border-0 mb-5">
@@ -37,9 +95,12 @@
                     <!-- 商品区分 -->
                     <div class="col-md-4">
                         <label asp-for="ArticleType" class="form-label fw-semibold text-secondary">@Html.DisplayNameFor(model => model.ArticleType)</label>
-                        <select asp-for="ArticleType" asp-items="ViewBag.ArticleTypeList" class="form-select">
-                            <option value="">指定なし</option>
-                        </select>
+                        <!-- テキストボックス -->
+                        <input asp-for="ArticleType" class="form-control" autocomplete="off" placeholder="商品区分を入力..." />
+                        <!-- 検索候補リストを表示するエリア（初期は非表示） -->
+                        <ul id="ArticleTypeList" class="list-group position-absolute w-100 shadow-sm" style="z-index: 1000; display: none; overflow-y: auto;">
+                            <!-- JSで動的に <li> が追加されます -->
+                        </ul>
                     </div>
 
                     <!-- Season -->

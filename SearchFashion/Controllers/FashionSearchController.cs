@@ -147,5 +147,24 @@ namespace FashionSearch.Controllers {
          // 検索結果を同じ Index ビューに返して表示する
          return View("Index", searchModel);
       }
+
+      [HttpGet]
+      public async Task<IActionResult> SearchArticleTypes(string query)
+      {
+         if (string.IsNullOrWhiteSpace(query))
+         {
+            return Json(new List<string>());
+         }
+
+         // データベースから前方一致（StartsWith）で最大10件取得
+         var articleTypes = await _context.Fashions // 実際のDbSet名に変更してください
+             .Where(c => c.Articletype.StartsWith(query))
+             .Select(c => c.Articletype)
+             .Distinct()
+             .Order()
+             .ToListAsync();
+
+         return Json(articleTypes);
+      }
    }
 }
