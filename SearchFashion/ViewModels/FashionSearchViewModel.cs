@@ -5,12 +5,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FashionSearch.ViewModels {
    public class FashionSearchViewModel : PaginatedListViewModel, IValidatableObject {
+      [Display(Name = "性別")]
       public string? Gender { get; set; }
+      [Display(Name = "カテゴリ")]
       public string? Category { get; set; }
+      [Display(Name = "商品区分")]
       public string? ArticleType { get; set; }
+      [Display(Name = "季節")]
       public string? Season { get; set; }
+      [Display(Name = "販売開始年")]
       public int? StartYear { get; set; }
+      [Display(Name = "販売終了年")]
       public int? EndYear { get; set; }
+      [Display(Name = "用途")]
       public string? Usage { get; set; }
 
       // 検索結果のリスト
