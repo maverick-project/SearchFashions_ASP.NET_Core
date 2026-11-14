@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const articleTypeInput = document.getElementById('ArticleType');
     const articleTypeList = document.getElementById('ArticleTypeList');
 
-    // 入力イベント（文字が変更されるたびに発火）
+    // 商品区分の入力イベント（文字が変更されるたびに発火）
     articleTypeInput.addEventListener('input', async function () {
         const query = this.value.trim();
 
@@ -55,13 +55,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // テキストボックスや候補リスト以外をクリックしたらリストを閉じる
     document.addEventListener('click', function (e) {
-        if (!input.contains(e.target) && !articleTypeList.contains(e.target)) {
+        if (!articleTypeInput.contains(e.target) && !articleTypeList.contains(e.target)) {
             articleTypeList.style.display = 'none';
         }
     });
+
+    // モーダルのDOM要素を取得
+    const imageModalEl = document.getElementById('imageModal');
+    // Bootstrap 5 のモーダルオブジェクトを生成
+    const imageModal = new bootstrap.Modal(imageModalEl);
+
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('imageModalLabel');
+
+    // 「画像表示」ボタンがクリックされたときのイベントを監視（イベント委譲）
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('show-image-btn')) {
+            const button = e.target;
+
+            // 隠しパラメータ（data-* 属性）から値を取得
+            const imagePath = button.getAttribute('data-image-path');
+            const itemName = button.getAttribute('data-item-name');
+
+            // モーダルのタイトルと画像の src を書き換える
+            modalTitle.textContent = itemName ? `${itemName} の画像` : 'ファッション画像';
+            modalImage.src = imagePath;
+            // モーダルを表示する
+            imageModal.show();
+        }
+    });
+
+    // モーダルが閉じたときに画像をクリアしておく（メモリやチラ見え防止）
+    imageModalEl.addEventListener('hidden.bs.modal', function () {
+        modalImage.src = '';
+    });
 });
 </script>
-
 <div class="container my-4">
     <!-- 検索フォーム（カードデザイン） -->
     <div class="card shadow-sm border-0 mb-5">
@@ -103,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </ul>
                     </div>
 
-                    <!-- Season -->
+                    <!-- 季節 -->
                     <div class="col-md-4">
                         <label asp-for="Season" class="form-label fw-semibold text-secondary">@Html.DisplayNameFor(model => model.Season)</label>
                         <select asp-for="Season" asp-items="ViewBag.SeasonList" class="form-select">
@@ -133,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             <option value="">指定なし</option>
                         </select>
                     </div>
-
                 </div>
 
                 <!-- ボタンエリア -->
@@ -166,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <th>@Html.DisplayNameFor(model => model.Season)</th>
                             <th>販売年</th>
                             <th>@Html.DisplayNameFor(model => model.Usage)</th>
+                            <th>@Html.DisplayNameFor(model => model.ImagePath)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -178,6 +207,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <td>@item.Season</td>
                                 <td>@item.Year</td>
                                 <td>@item.Usage</td>
+                                <!-- 画像ファイルパス -->
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-sm btn-link show-image-btn"
+                                            data-image-path="@item.Imagepath"
+                                            data-item-name="@(System.IO.Path.GetFileNameWithoutExtension(item.Imagepath))">
+                                        表示
+                                    </button>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -198,4 +236,25 @@ document.addEventListener('DOMContentLoaded', function () {
             <p class="fs-5">条件に一致するアイテムがありません。または上のフォームから検索を行ってください。</p>
         </div>
     }
+</div>
+
+<!-- ========================================== -->
+<!-- 画像表示用 Bootstrap 5 モーダル子画面 -->
+<!-- ========================================== -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">商品画像</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- モーダル内に表示する画像タグ -->
+                <img id="modalImage" src="" alt="商品画像" class="rounded w-50" style="max-height: 70vh;" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
 </div>

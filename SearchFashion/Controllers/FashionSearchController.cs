@@ -8,10 +8,12 @@ using SearchFashion.Models;
 namespace FashionSearch.Controllers {
    public class FashionSearchController : Controller {
       private readonly rag_fashionsContext _context;
+      private readonly IWebHostEnvironment _env;
 
-      public FashionSearchController(rag_fashionsContext context)
+      public FashionSearchController(rag_fashionsContext context, IWebHostEnvironment env)
       {
          _context = context;
+         _env = env;
       }
 
       // --- 共通：DBから日付の最小値・最大値を取得するヘルパー ---
@@ -144,10 +146,24 @@ namespace FashionSearch.Controllers {
          // 使用しない場合は普通にリストコレクションで返す
          searchModel.Results = await PaginatedList<Fashion>.CreateAsync(query, searchModel.PageIndex, searchModel.PageSize);
 
+         // wwwroot フォルダの物理パスを取得
+         string webRootPath = _env.WebRootPath;
+
+         // Imageパスをwebのurlに変換する。
+         for (var i=0; i< searchModel.Results.Count(); i++)
+         {
+            searchModel.Results[i].Imagepath = searchModel.Results[i].Imagepath.Replace(webRootPath, "").Replace("\\", "/");
+         }
+
          // 検索結果を同じ Index ビューに返して表示する
          return View("Index", searchModel);
       }
 
+      /// <summary>
+      /// ArticleTypeのAjax検索
+      /// </summary>
+      /// <param name="query"></param>
+      /// <returns></returns>
       [HttpGet]
       public async Task<IActionResult> SearchArticleTypes(string query)
       {
@@ -157,7 +173,7 @@ namespace FashionSearch.Controllers {
          }
 
          // データベースから前方一致（StartsWith）で最大10件取得
-         var articleTypes = await _context.Fashions // 実際のDbSet名に変更してください
+         var articleTypes = await _context.Fashions
              .Where(c => c.Articletype.StartsWith(query))
              .Select(c => c.Articletype)
              .Distinct()

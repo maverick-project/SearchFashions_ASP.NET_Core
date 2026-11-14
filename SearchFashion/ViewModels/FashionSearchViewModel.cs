@@ -20,6 +20,9 @@ namespace FashionSearch.ViewModels {
       [Display(Name = "用途")]
       public string? Usage { get; set; }
 
+      [Display(Name = "画像")]
+      public string? ImagePath { get; set; }
+
       // 検索結果のリスト
       // ページネーションを使う場合はListコレクションではなくPaginatedListカスタムコレクションを使う
       public PaginatedList<Fashion>? Results { get; set; } = null;
