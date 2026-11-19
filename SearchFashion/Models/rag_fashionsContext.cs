@@ -32,6 +32,7 @@ public partial class rag_fashionsContext : DbContext
             entity.Property(e => e.Category)
                 .HasMaxLength(50)
                 .HasColumnName("category");
+            entity.Property(e => e.Delflg).HasColumnName("delflg");
             entity.Property(e => e.Gender)
                 .HasMaxLength(50)
                 .HasColumnName("gender");

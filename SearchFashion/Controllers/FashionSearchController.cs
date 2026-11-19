@@ -102,7 +102,7 @@ namespace FashionSearch.Controllers {
          }
 
          // クエリの組み立て（未指定項目は除外）
-         var query = _context.Fashions.AsQueryable();
+         var query = _context.Fashions.AsQueryable().Where(a => a.Delflg == false);
 
          if (!string.IsNullOrEmpty(searchModel.Gender))
          {

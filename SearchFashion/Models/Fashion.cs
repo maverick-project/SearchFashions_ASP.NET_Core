@@ -24,4 +24,6 @@ public partial class Fashion
     public string Productdisplayname { get; set; }
 
     public string Imagepath { get; set; }
+
+    public bool? Delflg { get; set; }
 }
